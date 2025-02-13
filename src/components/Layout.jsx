@@ -17,6 +17,12 @@ export default function Layout({ children }) {
       <p>
         <span className="text-gradient">Caffeine Tracker</span> was made by
         Ayush Trivedi.
+        <br />
+        Checkout the project on{" "}
+        <a href="https://github.com/ayush-trivedi-925/caffeine-tracker">
+          Github
+        </a>
+        !
       </p>
     </footer>
   );
