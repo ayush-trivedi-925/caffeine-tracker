@@ -1,18 +1,33 @@
 import { FaPencilAlt } from "react-icons/fa";
 import { coffeeOptions } from "../utils/index";
 import { useState } from "react";
-export default function CoffeeForm() {
+import Modal from "./Modal";
+import Authentication from "./Authentication";
+export default function CoffeeForm({ isAuthenticated }) {
   const [selectedCoffee, setSelectedCoffee] = useState(null);
   const [showCoffeeTypes, setShowCoffeeTypes] = useState(false);
   const [coffeeCost, setCoffeeCost] = useState(0);
   const [hour, setHour] = useState(0);
   const [min, setMin] = useState(0);
+  const [modalState, setModalState] = useState(false);
 
   function handleCoffeeFormSubmit() {
+    if (!isAuthenticated) {
+      setModalState(true);
+      return;
+    }
     console.log(selectedCoffee, coffeeCost, hour, min);
   }
+  const handleCloseModal = () => {
+    setModalState(false);
+  };
   return (
     <>
+      {modalState && (
+        <Modal handleCloseModal={handleCloseModal}>
+          <Authentication />
+        </Modal>
+      )}
       <div className="section-header">
         <FaPencilAlt />
         <h2>Start Tracking Today </h2>

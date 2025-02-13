@@ -5,7 +5,7 @@ import Stats from "./components/Stats";
 import History from "./components/History";
 import { useState } from "react";
 function App() {
-  const isAuthenticated = true;
+  const isAuthenticated = false;
   const authenticatedContent = (
     <>
       <Stats />
@@ -17,7 +17,7 @@ function App() {
     <>
       <Layout>
         <Hero />
-        <CoffeeForm />
+        <CoffeeForm isAuthenticated={isAuthenticated} />
         {isAuthenticated && authenticatedContent}
       </Layout>
     </>
