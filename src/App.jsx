@@ -3,6 +3,7 @@ import Hero from "./components/Hero";
 import CoffeeForm from "./components/CoffeeForm";
 import Stats from "./components/Stats";
 import History from "./components/History";
+import { useState } from "react";
 function App() {
   const isAuthenticated = true;
   const authenticatedContent = (
@@ -11,6 +12,7 @@ function App() {
       <History />
     </>
   );
+
   return (
     <>
       <Layout>
