@@ -2,21 +2,29 @@ import { useState } from "react";
 import { FaMugHot } from "react-icons/fa";
 import Modal from "./Modal";
 import Authentication from "./Authentication";
+import { useAuth } from "../context/AuthContext";
 export default function Layout({ children }) {
   const [modalState, setModalState] = useState(false);
   const handleCloseModal = () => {
     return setModalState(false);
   };
+  const { globalUser, logout } = useAuth();
   const header = (
     <header>
       <div>
         <h1 className="text-gradient">Caffeine Tracker</h1>
         <p>For Coffee Insatiates</p>
       </div>
-      <button onClick={() => setModalState(true)}>
-        <p>Sign up free</p>
-        <FaMugHot />
-      </button>
+      {!globalUser ? (
+        <button onClick={() => setModalState(true)}>
+          <p>Sign up free</p>
+          <FaMugHot />
+        </button>
+      ) : (
+        <button onClick={logout}>
+          <p>Logout</p>
+        </button>
+      )}
     </header>
   );
   const footer = (
@@ -40,7 +48,7 @@ export default function Layout({ children }) {
     <>
       {modalState && (
         <Modal handleCloseModal={handleCloseModal}>
-          <Authentication />
+          <Authentication handleCloseModal={handleCloseModal} />
         </Modal>
       )}
 
