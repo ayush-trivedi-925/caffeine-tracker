@@ -2,10 +2,10 @@ import { FaChartLine } from "react-icons/fa";
 import {
   calculateCoffeeStats,
   calculateCurrentCaffeineLevel,
-  coffeeConsumptionHistory,
   getTopThreeCoffees,
   statusLevels,
 } from "../utils";
+import { useAuth } from "../context/AuthContext";
 function StatsCard({ lg, title, children }) {
   return (
     <div className={"card stat-card " + (lg ? " col-span-2" : "")}>
@@ -15,10 +15,9 @@ function StatsCard({ lg, title, children }) {
   );
 }
 export default function Stats() {
-  const stats = calculateCoffeeStats(coffeeConsumptionHistory);
-  const caffeine_level = calculateCurrentCaffeineLevel(
-    coffeeConsumptionHistory
-  );
+  const { globalData } = useAuth();
+  const stats = calculateCoffeeStats(globalData);
+  const caffeine_level = calculateCurrentCaffeineLevel(globalData);
   const warningLevel =
     caffeine_level < statusLevels["low"].maxLevel
       ? "low"
@@ -83,17 +82,15 @@ export default function Stats() {
             </tr>
           </thead>
           <tbody>
-            {getTopThreeCoffees(coffeeConsumptionHistory).map(
-              (coffee, coffeeIndex) => {
-                return (
-                  <tr key={coffeeIndex}>
-                    <td>{coffee.coffeeName}</td>
-                    <td>{coffee.count}</td>
-                    <td>{coffee.percentage}</td>
-                  </tr>
-                );
-              }
-            )}
+            {getTopThreeCoffees(globalData).map((coffee, coffeeIndex) => {
+              return (
+                <tr key={coffeeIndex}>
+                  <td>{coffee.coffeeName}</td>
+                  <td>{coffee.count}</td>
+                  <td>{coffee.percentage}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>

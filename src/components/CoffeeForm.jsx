@@ -3,6 +3,9 @@ import { coffeeOptions } from "../utils/index";
 import { useState } from "react";
 import Modal from "./Modal";
 import Authentication from "./Authentication";
+import { useAuth } from "../context/AuthContext";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 export default function CoffeeForm({ isAuthenticated }) {
   const [selectedCoffee, setSelectedCoffee] = useState(null);
   const [showCoffeeTypes, setShowCoffeeTypes] = useState(false);
@@ -10,13 +13,53 @@ export default function CoffeeForm({ isAuthenticated }) {
   const [hour, setHour] = useState(0);
   const [min, setMin] = useState(0);
   const [modalState, setModalState] = useState(false);
+  const { globalData, setGlobalData, globalUser } = useAuth();
 
-  function handleCoffeeFormSubmit() {
+  async function handleCoffeeFormSubmit() {
     if (!isAuthenticated) {
       setModalState(true);
       return;
     }
-    console.log(selectedCoffee, coffeeCost, hour, min);
+
+    // define guard close the only submits form if it has complete data
+    if (!selectedCoffee) {
+      return;
+    }
+    try {
+      // then we are going to create new data object
+      const newGlobalData = { ...(globalData || {}) };
+      const nowTime = Date.now();
+      const timetoSubtract = hour * 60 * 60 * 1000 + min * 60 * 100;
+      const timestamp = nowTime - timetoSubtract;
+
+      newGlobalData[timestamp] = {
+        name: selectedCoffee,
+        cost: coffeeCost,
+      };
+      console.log(timestamp, selectedCoffee, coffeeCost);
+      // update the global state
+      setGlobalData(newGlobalData);
+
+      // persist the data in firebase firestore
+      const userRef = doc(db, "users", globalUser.uid);
+      const res = await setDoc(
+        userRef,
+        {
+          [timestamp]: {
+            name: selectedCoffee,
+            cost: coffeeCost,
+          },
+        },
+        { merge: true }
+      );
+      console.log(selectedCoffee, coffeeCost, hour, min);
+      setSelectedCoffee(null);
+      setCoffeeCost(0);
+      setHour(0);
+      setMin(0);
+    } catch (error) {
+      console.log(error.message);
+    }
   }
   const handleCloseModal = () => {
     setModalState(false);
